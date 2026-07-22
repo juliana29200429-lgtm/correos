@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist Preoperacional - AutoCarga Pro</title>
+    <!-- Librería para generar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; }
+        .container { max-width: 800px; background: #fff; padding: 20px; margin: 0 auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        
+        .header { background: #9b2c2c; color: white; padding: 12px; border-radius: 6px; text-align: center; }
+        .header h2 { margin: 0; font-size: 16px; text-transform: uppercase; }
+        .header p { margin: 3px 0 0 0; font-size: 12px; color: #fed7d7; }
+        
+        .section-title { background: #c53030; color: white; padding: 6px 10px; font-weight: bold; margin-top: 15px; border-radius: 4px; font-size: 13px; page-break-after: avoid; }
+        
+        /* SALTO DE PÁGINA FORZADO EN SECCIÓN 4 */
+        .page-break { page-break-before: always; margin-top: 0 !important; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        
+        label { font-size: 12px; font-weight: bold; color: #9b2c2c; display: block; margin-bottom: 2px; }
+        
+        input[type="text"], input[type="date"], input[type="time"], select { width: 100%; padding: 6px; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 12px; transition: border-color 0.2s; }
+        
+        /* ESTILO PARA CAMPOS FALTANTES REGISTRADOS EN ROJO */
+        .input-error { border: 2px solid #e53e3e !important; background-color: #fff5f5; }
+
+        /* FILAS DEL CHECKLIST */
+        .chk-row { padding: 8px 0; border-bottom: 1px solid #edf2f7; page-break-inside: avoid; }
+        .chk-header { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 500; }
+        .chk-text { flex: 1; padding-right: 10px; }
+        .chk-options { display: flex; gap: 8px; }
+        .chk-options label { font-size: 11px; font-weight: bold; cursor: pointer; margin: 0; color: #2d3748; }
+        .chk-options input { margin-right: 2px; accent-color: #c53030; }
+        
+        /* CAMPO DE OBSERVACIÓN SI FALLA */
+        .obs-input { display: none; margin-top: 6px; }
+        .obs-input input { border: 1px solid #e53e3e; background-color: #fff5f5; color: #9b2c2c; font-weight: 500; }
+        
+        .btn-submit { background: #c53030; color: white; border: none; padding: 12px 20px; font-size: 15px; font-weight: bold; width: 100%; border-radius: 6px; margin-top: 20px; cursor: pointer; }
+        .btn-submit:hover { background: #9b2c2c; }
+        
+        .danger-box { background: #fff5f5; border-left: 4px solid #e53e3e; padding: 8px; margin-top: 15px; font-size: 11px; color: #c53030; page-break-inside: avoid; }
+        
+        @media (max-width: 600px) { 
+            .grid-2 { grid-template-columns: 1fr; }
+            .chk-header { flex-direction: column; align-items: flex-start; gap: 5px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="checklist-form">
+    <div class="header">
+        <h2>LISTA DE CHEQUEO PREOPERACIONAL – GRÚAS AUTOCARGA PRO</h2>
+        <p>Seguridad Primero: Inspección previa a la operación</p>
+    </div>
+
+    <!-- DATOS GENERALES CON CAMPOS OBLIGATORIOS -->
+    <div class="grid-2">
+        <div><label>Fecha: *</label><input type="date" id="fecha" required></div>
+        <div><label>Hora: *</label><input type="time" id="hora" required></div>
+        <div><label>Placa: *</label><input type="text" id="placa" placeholder="Ej: ABC-123" required></div>
+        <div><label>Kilometraje: *</label><input type="text" id="km" placeholder="Ej: 120,500" required></div>
+        <div><label>Operador: *</label><input type="text" id="operador" placeholder="Nombre completo" required></div>
+        <div><label>Ubicación: *</label><input type="text" id="ubicacion" placeholder="Ciudad / Sitio" required></div>
+    </div>
+
+    <!-- FUNCIÓN PARA CREAR ÍTEMS -->
+    <script>
+        let itemCounter = 0;
+        function crearItem(texto) {
+            itemCounter++;
+            const id = 'item_' + itemCounter;
+            document.write(`
+                <div class="chk-row">
+                    <div class="chk-header">
+                        <span class="chk-text">${texto}</span>
+                        <div class="chk-options">
+                            <label><input type="radio" name="${id}" value="OK" checked onclick="toggleObs('${id}', false)"> ✓ OK</label>
+                            <label style="color:#c53030;"><input type="radio" name="${id}" value="MAL" onclick="toggleObs('${id}', true)"> ✖ MAL</label>
+                            <label><input type="radio" name="${id}" value="NA" onclick="toggleObs('${id}', false)"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="obs-input" id="obs_box_${id}">
+                        <input type="text" placeholder="⚠ Describa la falla u observación aquí..." id="obs_txt_${id}">
+                    </div>
+                </div>
+            `);
+        }
+    </script>
+
+    <!-- 1. INSPECCIÓN GENERAL -->
+    <div class="section-title">1. INSPECCIÓN GENERAL DEL VEHÍCULO</div>
+    <script>
+        crearItem("Estado general de la carrocería y estructura.");
+        crearItem("No presenta daños visibles que afecten la operación.");
+        crearItem("Vidrios, espejos y parabrisas en buen estado.");
+        crearItem("Puertas y compartimientos cierran correctamente.");
+        crearItem("Sin fugas de aceite, combustible, refrigerante o líquidos.");
+        crearItem("Sin elementos sueltos con riesgo de desprendimiento.");
+    </script>
+
+    <!-- 2. NIVELES Y MECÁNICA -->
+    <div class="section-title">2. NIVELES Y SISTEMAS MECÁNICOS</div>
+    <script>
+        crearItem("Nivel de aceite de motor.");
+        crearItem("Nivel de refrigerante.");
+        crearItem("Nivel de líquido de frenos / dirección (si aplica).");
+        crearItem("Nivel de combustible.");
+        crearItem("Estado visible de correas y mangueras.");
+    </script>
+
+    <!-- 3. LLANTAS -->
+    <div class="section-title">3. LLANTAS Y RUEDAS</div>
+    <script>
+        crearItem("Presión de llantas dentro del rango recomendado.");
+        crearItem("Banda de rodamiento sin cortes, deformaciones o abultamientos.");
+        crearItem("Tuercas y elementos de fijación seguros.");
+        crearItem("Llanta de repuesto lista para uso (si aplica).");
+    </script>
+
+    <!-- 4. SISTEMA ELÉCTRICO (CON SALTO DE PÁGINA OBLIGATORIO) -->
+    <div class="section-title page-break">4. SISTEMA ELÉCTRICO E ILUMINACIÓN</div>
+    <script>
+        crearItem("Luces delanteras, traseras, freno y reversa operativas.");
+        crearItem("Direccionales y Luces de emergencia.");
+        crearItem("Balizas / luces luminosas de advertencia.");
+        crearItem("Pito/bocina y tablero sin alertas o testigos activos.");
+    </script>
+
+    <!-- 5. SEGURIDAD -->
+    <div class="section-title">5. EQUIPOS Y ELEMENTOS DE SEGURIDAD</div>
+    <script>
+        crearItem("Extintor vigente y con presión adecuada.");
+        crearItem("Botiquín, conos y banderolas completas.");
+        crearItem("Chaleco reflectivo, casco, guantes y linterna.");
+        crearItem("Herramientas básicas y equipo de carretera regulatorio.");
+    </script>
+
+    <!-- 6. GRÚA -->
+    <div class="section-title">6. EQUIPO ESPECÍFICO DE LA GRÚA</div>
+    <script>
+        crearItem("Cable, cadenas, eslingas, ganchos y grilletes OK.");
+        crearItem("Wincher, planchón, rampas y sistemas de arrastre operativos.");
+        crearItem("Pasadores, seguros, anclajes e hidráulico sin fugas.");
+    </script>
+
+    <!-- 7 & 8. ENCENDIDO -->
+    <div class="section-title">7 & 8. PRUEBAS DE ENCENDIDO</div>
+    <script>
+        crearItem("Foto tomada al tablero de instrumentos (KM, combustible, testigos).");
+        crearItem("Encendido normal sin ruidos anormales ni fugas.");
+        crearItem("Presión de aceite, temperatura, frenos y dirección OK.");
+        crearItem("Temperatura del motor dentro de parámetros normales OK.");
+        crearItem("No existen alarmas o testigos de falla que impidan la operación OK.");
+        crearItem("NNo se observan fugas después del encendido.OK.");
+
+    </script>
+
+    <!-- 9. OPERADOR -->
+    <div class="section-title">9. CONDICIÓN DEL OPERADOR</div>
+    <script>
+        crearItem("Condición física/mental óptima (descanso OK, sin alcohol/drogas).");
+        crearItem("Licencia vigente y uso completo de EPP.");
+    </script>
+
+    <!-- CRITERIO NO OPERACIÓN -->
+    <div class="danger-box">
+        <strong>⛔ CRITERIO DE NO OPERACIÓN:</strong> Si algún elemento crítico falla o está marcado en "✖ MAL", el vehículo NO debe operar y lo debe reportar de inmediato a la operación de Central.
+    </div>
+
+    <!-- AUTORIZACIÓN Y BOTÓN -->
+    <div style="margin-top: 15px; page-break-inside: avoid;">
+        <label>¿Vehículo autorizado para operar?</label>
+        <select id="autorizado" style="font-weight: bold;">
+            <option value="SÍ">SÍ - AUTORIZADO</option>
+            <option value="NO">NO - NO AUTORIZADO</option>
+        </select>
+    </div>
+
+    <button id="btn-descargar" class="btn-submit" onclick="generarPDF()">DESCARGAR CHECKLIST EN PDF</button>
+</div>
+
+<script>
+    function toggleObs(id, mostrar) {
+        const box = document.getElementById('obs_box_' + id);
+        if (mostrar) {
+            box.style.display = 'block';
+        } else {
+            box.style.display = 'none';
+            document.getElementById('obs_txt_' + id).value = '';
+        }
+    }
+
+    function generarPDF() {
+        // Lista de campos obligatorios
+        const camposObligatorios = [
+            { id: 'fecha', nombre: 'Fecha' },
+            { id: 'hora', nombre: 'Hora' },
+            { id: 'placa', nombre: 'Placa' },
+            { id: 'km', nombre: 'Kilometraje' },
+            { id: 'operador', nombre: 'Operador' },
+            { id: 'ubicacion', nombre: 'Ubicación' }
+        ];
+
+        let hayErrores = false;
+        let primerCampoVacio = null;
+
+        // Validar cada campo
+        camposObligatorios.forEach(campo => {
+            const input = document.getElementById(campo.id);
+            if (!input.value.trim()) {
+                input.classList.add('input-error');
+                hayErrores = true;
+                if (!primerCampoVacio) primerCampoVacio = input;
+            } else {
+                input.classList.remove('input-error');
+            }
+        });
+
+        if (hayErrores) {
+            alert('⚠️ Por favor complete todos los datos generales (Fecha, Hora, Placa, KM, Operador y Ubicación) antes de descargar el PDF.');
+            if (primerCampoVacio) primerCampoVacio.focus();
+            return; // Cancela la generación del PDF
+        }
+
+        const elemento = document.getElementById('checklist-form');
+        const boton = document.getElementById('btn-descargar');
+        
+        boton.style.display = 'none';
+
+        const placa = document.getElementById('placa').value.toUpperCase().trim();
+        const fecha = document.getElementById('fecha').value;
+        
+        const opciones = {
+            margin:       [8, 8, 8, 8],
+            filename:     `Checklist_${placa}_${fecha}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['css', 'legacy'] }
+        };
+
+        html2pdf().set(opciones).from(elemento).save().then(() => {
+            boton.style.display = 'block';
+        }).catch(err => {
+            console.error(err);
+            boton.style.display = 'block';
+        });
+    }
+</script>
+
+</body>
+</html>
