@@ -3,257 +3,752 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checklist Preoperacional - AutoCarga Pro</title>
-    <!-- Librería para generar PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <title>AUTOCARGA PRO - MANIOBRAS Y RESCATES</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; }
-        .container { max-width: 800px; background: #fff; padding: 20px; margin: 0 auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        
-        .header { background: #9b2c2c; color: white; padding: 12px; border-radius: 6px; text-align: center; }
-        .header h2 { margin: 0; font-size: 16px; text-transform: uppercase; }
-        .header p { margin: 3px 0 0 0; font-size: 12px; color: #fed7d7; }
-        
-        .section-title { background: #c53030; color: white; padding: 6px 10px; font-weight: bold; margin-top: 15px; border-radius: 4px; font-size: 13px; page-break-after: avoid; }
-        
-        /* SALTO DE PÁGINA FORZADO EN SECCIÓN 4 */
-        .page-break { page-break-before: always; margin-top: 0 !important; }
+        :root {
+            --primary-red: #8B0000;
+            --dark-red: #660000;
+            --light-red-bg: #fff5f5;
+            --body-bg: #f9f5f5;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --border-color: #eee;
+            --text-dark: #333333;
+            --text-muted: #666666;
+            --btn-red: #800000;
+            --success-color: #2e7d32;
+        }
 
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-        
-        label { font-size: 12px; font-weight: bold; color: #9b2c2c; display: block; margin-bottom: 2px; }
-        
-        input[type="text"], input[type="date"], input[type="time"], select { width: 100%; padding: 6px; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 12px; transition: border-color 0.2s; }
-        
-        /* ESTILO PARA CAMPOS FALTANTES REGISTRADOS EN ROJO */
-        .input-error { border: 2px solid #e53e3e !important; background-color: #fff5f5; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
 
-        /* FILAS DEL CHECKLIST */
-        .chk-row { padding: 8px 0; border-bottom: 1px solid #edf2f7; page-break-inside: avoid; }
-        .chk-header { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 500; }
-        .chk-text { flex: 1; padding-right: 10px; }
-        .chk-options { display: flex; gap: 8px; }
-        .chk-options label { font-size: 11px; font-weight: bold; cursor: pointer; margin: 0; color: #2d3748; }
-        .chk-options input { margin-right: 2px; accent-color: #c53030; }
-        
-        /* CAMPO DE OBSERVACIÓN SI FALLA */
-        .obs-input { display: none; margin-top: 6px; }
-        .obs-input input { border: 1px solid #e53e3e; background-color: #fff5f5; color: #9b2c2c; font-weight: 500; }
-        
-        .btn-submit { background: #c53030; color: white; border: none; padding: 12px 20px; font-size: 15px; font-weight: bold; width: 100%; border-radius: 6px; margin-top: 20px; cursor: pointer; }
-        .btn-submit:hover { background: #9b2c2c; }
-        
-        .danger-box { background: #fff5f5; border-left: 4px solid #e53e3e; padding: 8px; margin-top: 15px; font-size: 11px; color: #c53030; page-break-inside: avoid; }
-        
-        @media (max-width: 600px) { 
-            .grid-2 { grid-template-columns: 1fr; }
-            .chk-header { flex-direction: column; align-items: flex-start; gap: 5px; }
+        body {
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        /* HEADER RED BANNER */
+        header {
+            background: linear-gradient(130deg, #990000 0%, #500000 100%);
+            color: white;
+            text-align: center;
+            padding: 2.5rem 1rem 3.5rem 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .header-title svg {
+            width: 45px;
+            height: 45px;
+            fill: white;
+        }
+
+        .header-subtitle {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-top: 5px;
+            opacity: 0.95;
+            text-transform: uppercase;
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            max-width: 1000px;
+            margin: -30px auto 40px auto;
+            padding: 0 20px;
+        }
+
+        /* MENÚ CON EL ESTILO EXACTO DE LA IMAGEN */
+        .nav-menu-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+            padding: 5px 5px 15px 5px;
+        }
+
+        .nav-card-btn {
+            background: white;
+            border: 1px solid #fecdd3;
+            color: #880000;
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(136, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+
+        .nav-card-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #880000;
+            transition: fill 0.25s ease;
+        }
+
+        .nav-card-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(136, 0, 0, 0.12);
+        }
+
+        /* ESTADO ACTIVO (ROJO SÓLIDO COMO EN LA IMAGEN) */
+        .nav-card-btn.active {
+            background: #880000;
+            color: white;
+            border-color: #880000;
+            box-shadow: 0 8px 22px rgba(136, 0, 0, 0.35);
+        }
+
+        .nav-card-btn.active svg {
+            fill: white;
+        }
+
+        /* MAIN CARD CONTAINER */
+        .main-card {
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #f0f0f0;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card-header-title {
+            color: var(--btn-red);
+            font-size: 1.4rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .card-header-sub {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        /* ACCORDION ITEMS */
+        .accordion-item {
+            border: 1px solid #eef2f6;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-item.active {
+            border-color: #ffd1d1;
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.05);
+            background: white;
+        }
+
+        .accordion-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+            background: white;
+        }
+
+        .badge {
+            background: var(--btn-red);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 800;
+            padding: 8px 18px;
+            border-radius: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .arrow-icon {
+            width: 20px;
+            height: 20px;
+            fill: #666;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.active .arrow-icon {
+            transform: rotate(180deg);
+            fill: var(--btn-red);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
+            padding: 0 20px;
+            background: #ffffff;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 2000px;
+            padding: 20px 20px 25px 20px;
+            border-top: 1px solid #f0f0f0;
+            transition: max-height 0.4s ease-in-out;
+        }
+
+        /* SUB TABS (MANIOBRAS) */
+        .maniobras-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 0px;
+            flex-wrap: wrap;
+        }
+
+        .maniobra-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .maniobra-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .maniobra-btn.active {
+            background: var(--btn-red);
+            color: white;
+            border-color: var(--btn-red);
+        }
+
+        /* EMAIL DISPLAY AREA */
+        .email-display-card {
+            display: none;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .field-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--btn-red);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-copy {
+            background: #ffffff;
+            border: 1px solid var(--btn-red);
+            color: var(--btn-red);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .btn-copy:hover {
+            background: var(--btn-red);
+            color: white;
+        }
+
+        .btn-copy.copied {
+            background: var(--success-color);
+            border-color: var(--success-color);
+            color: white;
+        }
+
+        .field-box {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 0.9rem;
+            color: #1e293b;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.5;
+            font-family: inherit;
+        }
+
+        /* CALCULATOR STYLES */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .calc-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .calc-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+        }
+
+        .calc-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+            outline: none;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .calc-select:focus {
+            border-color: var(--btn-red);
+        }
+
+        .calc-result-box {
+            background: linear-gradient(135deg, #8B0000 0%, #500000 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2);
+        }
+
+        .calc-result-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+
+        .calc-result-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+        }
+
+        .calc-detail {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        /* TOAST NOTIFICATION */
+        .toast {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: var(--btn-red);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
 <body>
 
-<div class="container" id="checklist-form">
-    <div class="header">
-        <h2>LISTA DE CHEQUEO PREOPERACIONAL – GRÚAS AUTOCARGA PRO</h2>
-        <p>Seguridad Primero: Inspección previa a la operación</p>
-    </div>
+    <!-- HEADER -->
+    <header>
+        <div class="header-title">
+            <svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+            AUTOCARGA PRO
+            <svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+        </div>
+        <div class="header-subtitle">Maniobras y rescates</div>
+    </header>
 
-    <!-- DATOS GENERALES CON CAMPOS OBLIGATORIOS -->
-    <div class="grid-2">
-        <div><label>Fecha: *</label><input type="date" id="fecha" required></div>
-        <div><label>Hora: *</label><input type="time" id="hora" required></div>
-        <div><label>Placa: *</label><input type="text" id="placa" placeholder="Ej: ABC-123" required></div>
-        <div><label>Kilometraje: *</label><input type="text" id="km" placeholder="Ej: 120,500" required></div>
-        <div><label>Operador: *</label><input type="text" id="operador" placeholder="Nombre completo" required></div>
-        <div><label>Ubicación: *</label><input type="text" id="ubicacion" placeholder="Ciudad / Sitio" required></div>
-    </div>
+    <div class="container">
+        <!-- MENÚ PRINCIPAL TIPO BOTONES DE LA IMAGEN -->
+        <div class="nav-menu-container">
+            <button class="nav-card-btn active" onclick="switchTab('tab-aseguradoras', this)">
+                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                ASEGURADORAS
+            </button>
+            <button class="nav-card-btn" onclick="switchTab('tab-calculadora', this)">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 14H7v-2h10v2zm0-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                CALCULADORA
+            </button>
+        </div>
 
-    <!-- FUNCIÓN PARA CREAR ÍTEMS -->
-    <script>
-        let itemCounter = 0;
-        function crearItem(texto) {
-            itemCounter++;
-            const id = 'item_' + itemCounter;
-            document.write(`
-                <div class="chk-row">
-                    <div class="chk-header">
-                        <span class="chk-text">${texto}</span>
-                        <div class="chk-options">
-                            <label><input type="radio" name="${id}" value="OK" checked onclick="toggleObs('${id}', false)"> ✓ OK</label>
-                            <label style="color:#c53030;"><input type="radio" name="${id}" value="MAL" onclick="toggleObs('${id}', true)"> ✖ MAL</label>
-                            <label><input type="radio" name="${id}" value="NA" onclick="toggleObs('${id}', false)"> N/A</label>
+        <!-- TARJETA CONTENEDORA -->
+        <div class="main-card">
+
+            <!-- SECCIÓN ASEGURADORAS -->
+            <div id="tab-aseguradoras" class="tab-content active">
+                <div class="card-header-title">
+                    🏢 Plantillas de Correo por Aseguradora
+                </div>
+                <div class="card-header-sub">
+                    Selecciona una aseguradora para desplegar sus maniobras y correos
+                </div>
+
+                <!-- ACORDEÓN AXA -->
+                <div class="accordion-item" id="item-axa">
+                    <div class="accordion-header" onclick="toggleAccordion('item-axa')">
+                        <span class="badge">AXA</span>
+                        <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="maniobras-tabs" id="tabs-axa">
+                            <button class="maniobra-btn" onclick="toggleManiobra('AXA', 'patines')">Maniobra patines</button>
+                            <button class="maniobra-btn" onclick="toggleManiobra('AXA', 'sotano')">Maniobra sótano</button>
+                            <button class="maniobra-btn" onclick="toggleManiobra('AXA', 'sotano_patines')">Maniobra sótano y patines</button>
+                        </div>
+
+                        <div class="email-display-card" id="card-axa">
+                            <div class="field-group">
+                                <div class="field-header">
+                                    <span class="field-label">Correos Destinatarios:</span>
+                                    <button class="btn-copy" onclick="copyContent('emails-axa', this)">📋 Copiar Correos</button>
+                                </div>
+                                <div class="field-box" id="emails-axa"></div>
+                            </div>
+
+                            <div class="field-group">
+                                <div class="field-header">
+                                    <span class="field-label">Asunto:</span>
+                                    <button class="btn-copy" onclick="copyContent('subject-axa', this)">📋 Copiar Asunto</button>
+                                </div>
+                                <div class="field-box" id="subject-axa"></div>
+                            </div>
+
+                            <div class="field-group">
+                                <div class="field-header">
+                                    <span class="field-label">Cuerpo del Correo:</span>
+                                    <button class="btn-copy" onclick="copyContent('body-axa', this)">📋 Copiar Cuerpo</button>
+                                </div>
+                                <div class="field-box" id="body-axa"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="obs-input" id="obs_box_${id}">
-                        <input type="text" placeholder="⚠ Describa la falla u observación aquí..." id="obs_txt_${id}">
+                </div>
+
+                <!-- ACORDEÓN ASSIEXPRESS -->
+                <div class="accordion-item" id="item-assiexpress">
+                    <div class="accordion-header" onclick="toggleAccordion('item-assiexpress')">
+                        <span class="badge">ASSIEXPRESS</span>
+                        <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="maniobras-tabs" id="tabs-assiexpress">
+                            <button class="maniobra-btn" onclick="toggleManiobra('ASSIEXPRESS', 'patines')">Maniobra patines</button>
+                            <button class="maniobra-btn" onclick="toggleManiobra('ASSIEXPRESS', 'sotano')">Maniobra sótano</button>
+                            <button class="maniobra-btn" onclick="toggleManiobra('ASSIEXPRESS', 'sotano_patines')">Maniobra sótano y patines</button>
+                        </div>
+
+                        <div class="email-display-card" id="card-assiexpress">
+                            <div class="field-group">
+                                <div class="field-header">
+                                    <span class="field-label">Correos Destinatarios:</span>
+                                    <button class="btn-copy" onclick="copyContent('emails-assiexpress', this)">📋 Copiar Correos</button>
+                                </div>
+                                <div class="field-box" id="emails-assiexpress"></div>
+                            </div>
+
+                            <div class="field-group">
+                                <div class="field-header">
+                                    <span class="field-label">Asunto:</span>
+                                    <button class="btn-copy" onclick="copyContent('subject-assiexpress', this)">📋 Copiar Asunto</button>
+                                </div>
+                                <div class="field-box" id="subject-assiexpress"></div>
+                            </div>
+
+                            <div class="field-group">
+                                <div class="field-header">
+                                    <span class="field-label">Cuerpo del Correo:</span>
+                                    <button class="btn-copy" onclick="copyContent('body-assiexpress', this)">📋 Copiar Cuerpo</button>
+                                </div>
+                                <div class="field-box" id="body-assiexpress"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            `);
-        }
-    </script>
+            </div>
 
-    <!-- 1. INSPECCIÓN GENERAL -->
-    <div class="section-title">1. INSPECCIÓN GENERAL DEL VEHÍCULO</div>
-    <script>
-        crearItem("Estado general de la carrocería y estructura.");
-        crearItem("No presenta daños visibles que afecten la operación.");
-        crearItem("Vidrios, espejos y parabrisas en buen estado.");
-        crearItem("Puertas y compartimientos cierran correctamente.");
-        crearItem("Sin fugas de aceite, combustible, refrigerante o líquidos.");
-        crearItem("Sin elementos sueltos con riesgo de desprendimiento.");
-    </script>
+            <!-- SECCIÓN CALCULADORA -->
+            <div id="tab-calculadora" class="tab-content">
+                <div class="card-header-title">
+                    🧮 Calculadora de Maniobras
+                </div>
+                <div class="card-header-sub">
+                    Calcula el valor según la aseguradora y cantidad de patines requeridos
+                </div>
 
-    <!-- 2. NIVELES Y MECÁNICA -->
-    <div class="section-title">2. NIVELES Y SISTEMAS MECÁNICOS</div>
-    <script>
-        crearItem("Nivel de aceite de motor.");
-        crearItem("Nivel de refrigerante.");
-        crearItem("Nivel de líquido de frenos / dirección (si aplica).");
-        crearItem("Nivel de combustible.");
-        crearItem("Estado visible de correas y mangueras.");
-    </script>
+                <div class="calc-grid">
+                    <div class="calc-group">
+                        <label for="calc-company">Aseguradora</label>
+                        <select id="calc-company" class="calc-select" onchange="calculateTariff()">
+                            <option value="axa">AXA ($41.000 / patín)</option>
+                            <option value="assiexpress">ASSIEXPRESS ($44.000 / patín)</option>
+                        </select>
+                    </div>
 
-    <!-- 3. LLANTAS -->
-    <div class="section-title">3. LLANTAS Y RUEDAS</div>
-    <script>
-        crearItem("Presión de llantas dentro del rango recomendado.");
-        crearItem("Banda de rodamiento sin cortes, deformaciones o abultamientos.");
-        crearItem("Tuercas y elementos de fijación seguros.");
-        crearItem("Llanta de repuesto lista para uso (si aplica).");
-    </script>
+                    <div class="calc-group">
+                        <label for="calc-patines">Cantidad de Patines</label>
+                        <select id="calc-patines" class="calc-select" onchange="calculateTariff()">
+                            <option value="0">0 Patines</option>
+                            <option value="1">1 Patín</option>
+                            <option value="2">2 Patines</option>
+                            <option value="3">3 Patines</option>
+                            <option value="4">4 Patines</option>
+                        </select>
+                    </div>
+                </div>
 
-    <!-- 4. SISTEMA ELÉCTRICO (CON SALTO DE PÁGINA OBLIGATORIO) -->
-    <div class="section-title page-break">4. SISTEMA ELÉCTRICO E ILUMINACIÓN</div>
-    <script>
-        crearItem("Luces delanteras, traseras, freno y reversa operativas.");
-        crearItem("Direccionales y Luces de emergencia.");
-        crearItem("Balizas / luces luminosas de advertencia.");
-        crearItem("Pito/bocina y tablero sin alertas o testigos activos.");
-    </script>
+                <div class="calc-result-box">
+                    <span class="calc-result-title">Valor Total Maniobra</span>
+                    <span class="calc-result-value" id="calc-total">$0</span>
+                    <span class="calc-detail" id="calc-detail">0 patines x $0</span>
+                </div>
+            </div>
 
-    <!-- 5. SEGURIDAD -->
-    <div class="section-title">5. EQUIPOS Y ELEMENTOS DE SEGURIDAD</div>
-    <script>
-        crearItem("Extintor vigente y con presión adecuada.");
-        crearItem("Botiquín, conos y banderolas completas.");
-        crearItem("Chaleco reflectivo, casco, guantes y linterna.");
-        crearItem("Herramientas básicas y equipo de carretera regulatorio.");
-    </script>
-
-    <!-- 6. GRÚA -->
-    <div class="section-title">6. EQUIPO ESPECÍFICO DE LA GRÚA</div>
-    <script>
-        crearItem("Cable, cadenas, eslingas, ganchos y grilletes OK.");
-        crearItem("Wincher, planchón, rampas y sistemas de arrastre operativos.");
-        crearItem("Pasadores, seguros, anclajes e hidráulico sin fugas.");
-    </script>
-
-    <!-- 7 & 8. ENCENDIDO -->
-    <div class="section-title">7 & 8. PRUEBAS DE ENCENDIDO</div>
-    <script>
-        crearItem("Foto tomada al tablero de instrumentos (KM, combustible, testigos).");
-        crearItem("Encendido normal sin ruidos anormales ni fugas.");
-        crearItem("Presión de aceite, temperatura, frenos y dirección OK.");
-        crearItem("Temperatura del motor dentro de parámetros normales OK.");
-        crearItem("No existen alarmas o testigos de falla que impidan la operación OK.");
-        crearItem("NNo se observan fugas después del encendido.OK.");
-
-    </script>
-
-    <!-- 9. OPERADOR -->
-    <div class="section-title">9. CONDICIÓN DEL OPERADOR</div>
-    <script>
-        crearItem("Condición física/mental óptima (descanso OK, sin alcohol/drogas).");
-        crearItem("Licencia vigente y uso completo de EPP.");
-    </script>
-
-    <!-- CRITERIO NO OPERACIÓN -->
-    <div class="danger-box">
-        <strong>⛔ CRITERIO DE NO OPERACIÓN:</strong> Si algún elemento crítico falla o está marcado en "✖ MAL", el vehículo NO debe operar y lo debe reportar de inmediato a la operación de Central.
+        </div>
     </div>
 
-    <!-- AUTORIZACIÓN Y BOTÓN -->
-    <div style="margin-top: 15px; page-break-inside: avoid;">
-        <label>¿Vehículo autorizado para operar?</label>
-        <select id="autorizado" style="font-weight: bold;">
-            <option value="SÍ">SÍ - AUTORIZADO</option>
-            <option value="NO">NO - NO AUTORIZADO</option>
-        </select>
+    <div id="toast" class="toast">
+        ✓ Copiado al portapapeles
     </div>
 
-    <button id="btn-descargar" class="btn-submit" onclick="generarPDF()">DESCARGAR CHECKLIST EN PDF</button>
-</div>
-
-<script>
-    function toggleObs(id, mostrar) {
-        const box = document.getElementById('obs_box_' + id);
-        if (mostrar) {
-            box.style.display = 'block';
-        } else {
-            box.style.display = 'none';
-            document.getElementById('obs_txt_' + id).value = '';
-        }
-    }
-
-    function generarPDF() {
-        // Lista de campos obligatorios
-        const camposObligatorios = [
-            { id: 'fecha', nombre: 'Fecha' },
-            { id: 'hora', nombre: 'Hora' },
-            { id: 'placa', nombre: 'Placa' },
-            { id: 'km', nombre: 'Kilometraje' },
-            { id: 'operador', nombre: 'Operador' },
-            { id: 'ubicacion', nombre: 'Ubicación' }
-        ];
-
-        let hayErrores = false;
-        let primerCampoVacio = null;
-
-        // Validar cada campo
-        camposObligatorios.forEach(campo => {
-            const input = document.getElementById(campo.id);
-            if (!input.value.trim()) {
-                input.classList.add('input-error');
-                hayErrores = true;
-                if (!primerCampoVacio) primerCampoVacio = input;
-            } else {
-                input.classList.remove('input-error');
-            }
-        });
-
-        if (hayErrores) {
-            alert('⚠️ Por favor complete todos los datos generales (Fecha, Hora, Placa, KM, Operador y Ubicación) antes de descargar el PDF.');
-            if (primerCampoVacio) primerCampoVacio.focus();
-            return; // Cancela la generación del PDF
-        }
-
-        const elemento = document.getElementById('checklist-form');
-        const boton = document.getElementById('btn-descargar');
-        
-        boton.style.display = 'none';
-
-        const placa = document.getElementById('placa').value.toUpperCase().trim();
-        const fecha = document.getElementById('fecha').value;
-        
-        const opciones = {
-            margin:       [8, 8, 8, 8],
-            filename:     `Checklist_${placa}_${fecha}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak:    { mode: ['css', 'legacy'] }
+    <script>
+        // TARIFAS
+        const rates = {
+            axa: 41000,
+            assiexpress: 44000
         };
 
-        html2pdf().set(opciones).from(elemento).save().then(() => {
-            boton.style.display = 'block';
-        }).catch(err => {
-            console.error(err);
-            boton.style.display = 'block';
-        });
-    }
-</script>
+        // CORREOS
+        const emailsData = {
+            AXA: [
+                "rescates.proveedores@axa-assistance.com.co",
+                "Diana.rodriguez@axa-assistance.com.co",
+                "asistenciasautocargapro@gmail.com",
+                "autocargapro@gmail.com",
+                "zambranotatiana25@gmail.com"
+            ],
+            ASSIEXPRESS: [
+                "maniobrasyrescates@assisprex.com",
+                "asistenciasautocargapro@gmail.com",
+                "autocargapro@gmail.com",
+                "zambranotatiana25@gmail.com"
+            ]
+        };
 
+        const templatesData = {
+            patines: {
+                subject: "EVIDENCIAS DE MANIOBRA USO DE PATINES // EXPEDIENTE",
+                body: `Buenas tardes estimados, espero se encuentran bien,
+
+El día ** ** 2026, prestamos un servicio en la cual sus # llantas se encontraban bloqueadas, por lo que tuvimos que usar # patines en su cargue y descargue del vehículo.
+
+Al necesitar # patines por las tarifas que se nos compartieron, el servicio tendría un costo adicional de $#.
+
+Adjunto evidencias de la prestación del servicio
+
+Quedo atenta a cualquier inquietud, muchas gracias.`
+            },
+            sotano: {
+                subject: "EVIDENCIAS DE MANIOBRA RESCATE SOTANO // EXPEDIENTE",
+                body: `Buenos días estimados,
+
+El día ** ** de 2026, prestamos un servicio que se encontraba en un sótano hacer la maniobra del rescate del vehíuclo
+
+Al estar en un sótano, la maniobra cuesta $* según las tarifas que nos compartieron, en caso de cualquier novedad o corrección acerca de este caso estamos atentos.
+
+Adjunto evidencias de la prestación del servicio`
+            },
+            sotano_patines: {
+                subject: "EVIDENCIAS DE MANIOBRA RESCATE SOTANO Y USO DE PATINES // EXPEDIENTE",
+                body: `Buenos días estimados,
+
+El día ** ** de 2026, prestamos un servicio que se encontraba en un sótano y sus * llantas estaban bloqueadas, por lo que tuvimos que usar * patines en su salida, cargue y descargue del vehículo.
+
+Al necesitar * patines por las tarifas que se nos compartieron, el servicio tendría un costo adicional de $*
+Y al estar en un sótano, la maniobra cuesta $* según las tarifas que nos compartieron, en caso de cualquier novedad o corrección acerca de este caso estamos atentos.
+
+Adjunto evidencias de la prestación del servicio`
+            }
+        };
+
+        const state = {
+            AXA: null,
+            ASSIEXPRESS: null
+        };
+
+        // CAMBIAR PESTAÑA PRINCIPAL
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-card-btn').forEach(b => b.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+
+            if (tabId === 'tab-calculadora') {
+                calculateTariff();
+            }
+        }
+
+        // CALCULADORA
+        function calculateTariff() {
+            const company = document.getElementById('calc-company').value;
+            const patines = parseInt(document.getElementById('calc-patines').value);
+            const unitPrice = rates[company];
+
+            const total = patines * unitPrice;
+
+            document.getElementById('calc-total').innerText = '$' + total.toLocaleString('es-CO');
+            document.getElementById('calc-detail').innerText = `${patines} ${patines === 1 ? 'patín' : 'patines'} x $${unitPrice.toLocaleString('es-CO')}`;
+        }
+
+        // TOGGLE MANIOBRA
+        function toggleManiobra(company, maniobraKey) {
+            if (state[company] === maniobraKey) {
+                state[company] = null;
+            } else {
+                state[company] = maniobraKey;
+            }
+
+            const tabsContainer = document.getElementById(`tabs-${company.toLowerCase()}`);
+            const buttons = tabsContainer.querySelectorAll('.maniobra-btn');
+            const indexMap = { 'patines': 0, 'sotano': 1, 'sotano_patines': 2 };
+
+            buttons.forEach((btn, idx) => {
+                if (state[company] && idx === indexMap[state[company]]) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            renderCompany(company);
+        }
+
+        function renderCompany(company) {
+            const compLower = company.toLowerCase();
+            const currentManiobra = state[company];
+            const cardElement = document.getElementById(`card-${compLower}`);
+
+            if (!currentManiobra) {
+                if (cardElement) cardElement.style.display = 'none';
+                return;
+            }
+
+            if (cardElement) cardElement.style.display = 'flex';
+
+            const emailBox = document.getElementById(`emails-${compLower}`);
+            if (emailBox) emailBox.innerText = emailsData[company].join(', ');
+
+            const template = templatesData[currentManiobra];
+            const subjectBox = document.getElementById(`subject-${compLower}`);
+            const bodyBox = document.getElementById(`body-${compLower}`);
+
+            if (subjectBox) subjectBox.innerText = template.subject;
+            if (bodyBox) bodyBox.innerText = template.body;
+        }
+
+        function toggleAccordion(id) {
+            const item = document.getElementById(id);
+            item.classList.toggle('active');
+        }
+
+        function copyContent(boxId, btn) {
+            const text = document.getElementById(boxId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast();
+                const originalText = btn.innerHTML;
+                btn.innerHTML = "✓ ¡Copiado!";
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+    </script>
 </body>
 </html>
